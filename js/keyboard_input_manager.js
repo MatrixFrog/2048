@@ -14,15 +14,13 @@ KeyboardInputManager.prototype.on = function (event, callback) {
 KeyboardInputManager.prototype.emit = function (event, data) {
   let callbacks = this.events[event];
   if (callbacks) {
-    callbacks.forEach(function (callback) {
+    for (let callback of callbacks) {
       callback(data);
-    });
+    }
   }
 };
 
 KeyboardInputManager.prototype.listen = function () {
-  let self = this;
-
   let map = {
     38: 0, // Up
     39: 1, // Right
@@ -38,7 +36,7 @@ KeyboardInputManager.prototype.listen = function () {
     65: 3  // A
   };
 
-  document.addEventListener("keydown", function (event) {
+  document.addEventListener("keydown", (event) => {
     let modifiers = event.altKey || event.ctrlKey || event.metaKey ||
                     event.shiftKey;
     let mapped    = map[event.which];
@@ -46,10 +44,10 @@ KeyboardInputManager.prototype.listen = function () {
     if (!modifiers) {
       if (mapped !== undefined) {
         event.preventDefault();
-        self.emit("move", mapped);
+        this.emit("move", mapped);
       }
 
-      if (event.which === 32) self.restart.bind(self)(event);
+      if (event.which === 32) this.restart(event);
     }
   });
 
@@ -65,7 +63,7 @@ KeyboardInputManager.prototype.listen = function () {
   let touchStartClientX, touchStartClientY;
   let gameContainer = document.getElementsByClassName("game-container")[0];
 
-  gameContainer.addEventListener("touchstart", function (event) {
+  gameContainer.addEventListener("touchstart", (event) => {
     if (event.touches.length > 1) return;
 
     touchStartClientX = event.touches[0].clientX;
@@ -73,11 +71,11 @@ KeyboardInputManager.prototype.listen = function () {
     event.preventDefault();
   });
 
-  gameContainer.addEventListener("touchmove", function (event) {
+  gameContainer.addEventListener("touchmove", (event) => {
     event.preventDefault();
   });
 
-  gameContainer.addEventListener("touchend", function (event) {
+  gameContainer.addEventListener("touchend", (event) => {
     if (event.touches.length > 0) return;
 
     let dx = event.changedTouches[0].clientX - touchStartClientX;
@@ -88,7 +86,7 @@ KeyboardInputManager.prototype.listen = function () {
 
     if (Math.max(absDx, absDy) > 10) {
       // (right : left) : (down : up)
-      self.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
+      this.emit("move", absDx > absDy ? (dx > 0 ? 1 : 3) : (dy > 0 ? 2 : 0));
     }
   });
 };

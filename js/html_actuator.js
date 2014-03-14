@@ -8,30 +8,27 @@ function HTMLActuator() {
 }
 
 HTMLActuator.prototype.actuate = function (grid, metadata) {
-  let self = this;
+  window.requestAnimationFrame(() => {
+    this.clearContainer(this.tileContainer);
 
-  window.requestAnimationFrame(function () {
-    self.clearContainer(self.tileContainer);
-
-    grid.cells.forEach(function (column) {
-      column.forEach(function (cell) {
+    for (let column of grid.cells) {
+      for (let cell of column) {
         if (cell) {
-          self.addTile(cell);
+          this.addTile(cell);
         }
-      });
-    });
-
-    self.updateScore(metadata.score);
-    self.updateBestScore(metadata.bestScore);
-
-    if (metadata.terminated) {
-      if (metadata.over) {
-        self.message(false); // You lose
-      } else if (metadata.won) {
-        self.message(true); // You win!
       }
     }
 
+    this.updateScore(metadata.score);
+    this.updateBestScore(metadata.bestScore);
+
+    if (metadata.terminated) {
+      if (metadata.over) {
+        this.message(false); // You lose
+      } else if (metadata.won) {
+        this.message(true); // You win!
+      }
+    }
   });
 };
 
@@ -47,8 +44,6 @@ HTMLActuator.prototype.clearContainer = function (container) {
 };
 
 HTMLActuator.prototype.addTile = function (tile) {
-  let self = this;
-
   let wrapper   = document.createElement("div");
   let inner     = document.createElement("div");
   let position  = tile.previousPosition || { x: tile.x, y: tile.y };
@@ -66,17 +61,17 @@ HTMLActuator.prototype.addTile = function (tile) {
 
   if (tile.previousPosition) {
     // Make sure that the tile gets rendered in the previous position first
-    window.requestAnimationFrame(function () {
-      classes[2] = self.positionClass({ x: tile.x, y: tile.y });
-      self.applyClasses(wrapper, classes); // Update the position
+    window.requestAnimationFrame(() => {
+      classes[2] = this.positionClass({ x: tile.x, y: tile.y });
+      this.applyClasses(wrapper, classes); // Update the position
     });
   } else if (tile.mergedFrom) {
     classes.push("tile-merged");
     this.applyClasses(wrapper, classes);
 
     // Render the tiles that merged
-    tile.mergedFrom.forEach(function (merged) {
-      self.addTile(merged);
+    tile.mergedFrom.forEach((merged) => {
+      this.addTile(merged);
     });
   } else {
     classes.push("tile-new");
