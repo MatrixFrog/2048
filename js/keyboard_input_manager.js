@@ -12,7 +12,7 @@ KeyboardInputManager.prototype.on = function (event, callback) {
 };
 
 KeyboardInputManager.prototype.emit = function (event, data) {
-  var callbacks = this.events[event];
+  let callbacks = this.events[event];
   if (callbacks) {
     callbacks.forEach(function (callback) {
       callback(data);
@@ -21,9 +21,9 @@ KeyboardInputManager.prototype.emit = function (event, data) {
 };
 
 KeyboardInputManager.prototype.listen = function () {
-  var self = this;
+  let self = this;
 
-  var map = {
+  let map = {
     38: 0, // Up
     39: 1, // Right
     40: 2, // Down
@@ -39,9 +39,9 @@ KeyboardInputManager.prototype.listen = function () {
   };
 
   document.addEventListener("keydown", function (event) {
-    var modifiers = event.altKey || event.ctrlKey || event.metaKey ||
+    let modifiers = event.altKey || event.ctrlKey || event.metaKey ||
                     event.shiftKey;
-    var mapped    = map[event.which];
+    let mapped    = map[event.which];
 
     if (!modifiers) {
       if (mapped !== undefined) {
@@ -53,7 +53,7 @@ KeyboardInputManager.prototype.listen = function () {
     }
   });
 
-  var retry = document.querySelector(".retry-button");
+  let retry = document.querySelector(".retry-button");
   retry.addEventListener("click", this.restart.bind(this));
   retry.addEventListener("touchend", this.restart.bind(this));
 
@@ -62,8 +62,8 @@ KeyboardInputManager.prototype.listen = function () {
   keepPlaying.addEventListener("touchend", this.keepPlaying.bind(this));
 
   // Listen to swipe events
-  var touchStartClientX, touchStartClientY;
-  var gameContainer = document.getElementsByClassName("game-container")[0];
+  let touchStartClientX, touchStartClientY;
+  let gameContainer = document.getElementsByClassName("game-container")[0];
 
   gameContainer.addEventListener("touchstart", function (event) {
     if (event.touches.length > 1) return;
@@ -80,11 +80,11 @@ KeyboardInputManager.prototype.listen = function () {
   gameContainer.addEventListener("touchend", function (event) {
     if (event.touches.length > 0) return;
 
-    var dx = event.changedTouches[0].clientX - touchStartClientX;
-    var absDx = Math.abs(dx);
+    let dx = event.changedTouches[0].clientX - touchStartClientX;
+    let absDx = Math.abs(dx);
 
-    var dy = event.changedTouches[0].clientY - touchStartClientY;
-    var absDy = Math.abs(dy);
+    let dy = event.changedTouches[0].clientY - touchStartClientY;
+    let absDy = Math.abs(dy);
 
     if (Math.max(absDx, absDy) > 10) {
       // (right : left) : (down : up)
