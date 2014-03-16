@@ -105,8 +105,6 @@ class GameManager {
 
     if (this.isGameTerminated()) return; // Don't do anything if the game's over
 
-    let cell, tile;
-
     let vector     = this.getVector(direction);
     let traversals = this.buildTraversals(vector);
     let moved      = false;
@@ -117,8 +115,8 @@ class GameManager {
     // Traverse the grid in the right direction and move tiles
     traversals.x.forEach((x) => {
       traversals.y.forEach((y) => {
-        cell = {x, y};
-        tile = this.grid.cellContent(cell);
+        let cell = {x, y};
+        let tile = this.grid.cellContent(cell);
 
         if (tile) {
           let positions = this.findFarthestPosition(cell, vector);
