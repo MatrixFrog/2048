@@ -30,20 +30,24 @@ class Grid {
   availableCells() {
     let cells = [];
 
-    this.eachCell(function (x, y, tile) {
-      if (!tile) {
-        cells.push({x, y});
+    for (let x = 0; x < this.size; x++) {
+      for (let y = 0; y < this.size; y++) {
+        if (!this.cells[x][y]) {
+          cells.push({x, y});
+        }
       }
-    });
+    }
 
     return cells;
   };
 
-  // Call callback for every cell
-  eachCell(callback) {
+  // A generator which yields all the tiles in the grid.
+  *tiles() {
     for (let x = 0; x < this.size; x++) {
       for (let y = 0; y < this.size; y++) {
-        callback(x, y, this.cells[x][y]);
+        let tile = this.cells[x][y];
+        if (tile)
+          yield tile;
       }
     }
   };

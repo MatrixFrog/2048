@@ -84,12 +84,10 @@ class GameManager {
 
   // Save all tile positions and remove merger info
   prepareTiles() {
-    this.grid.eachCell(function (x, y, tile) {
-      if (tile) {
-        tile.mergedFrom = null;
-        tile.savePosition();
-      }
-    });
+    for (let tile of this.grid.tiles()) {
+      tile.mergedFrom = null;
+      tile.savePosition();
+    }
   }
 
   // Move a tile and its representation
