@@ -18,32 +18,33 @@ window.fakeStorage = {
   }
 };
 
-function LocalScoreManager() {
-  this.key     = "bestScore";
+class LocalScoreManager {
+  constructor() {
+    this.key     = "bestScore";
 
-  var supported = this.localStorageSupported();
-  this.storage = supported ? window.localStorage : window.fakeStorage;
+    var supported = this.localStorageSupported();
+    this.storage = supported ? window.localStorage : window.fakeStorage;
+  }
+
+  localStorageSupported() {
+    var testKey = "test";
+    var storage = window.localStorage;
+
+    try {
+      storage.setItem(testKey, "1");
+      storage.removeItem(testKey);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  get() {
+    return this.storage.getItem(this.key) || 0;
+  }
+
+  set(score) {
+    this.storage.setItem(this.key, score);
+  }
 }
 window.LocalScoreManager = LocalScoreManager;
-
-LocalScoreManager.prototype.localStorageSupported = function () {
-  var testKey = "test";
-  var storage = window.localStorage;
-
-  try {
-    storage.setItem(testKey, "1");
-    storage.removeItem(testKey);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
-
-LocalScoreManager.prototype.get = function () {
-  return this.storage.getItem(this.key) || 0;
-};
-
-LocalScoreManager.prototype.set = function (score) {
-  this.storage.setItem(this.key, score);
-};
-

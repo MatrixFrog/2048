@@ -1,135 +1,137 @@
-function HTMLActuator() {
-  this.tileContainer    = document.querySelector(".tile-container");
-  this.scoreContainer   = document.querySelector(".score-container");
-  this.bestContainer    = document.querySelector(".best-container");
-  this.messageContainer = document.querySelector(".game-message");
+class HTMLActuator {
+  constructor() {
+    this.tileContainer    = document.querySelector(".tile-container");
+    this.scoreContainer   = document.querySelector(".score-container");
+    this.bestContainer    = document.querySelector(".best-container");
+    this.messageContainer = document.querySelector(".game-message");
 
-  this.score = 0;
-}
-window.HTMLActuator = HTMLActuator;
+    this.score = 0;
+  }
 
-HTMLActuator.prototype.actuate = function (grid, metadata) {
-  window.requestAnimationFrame(() => {
-    this.clearContainer(this.tileContainer);
+  actuate(grid, metadata) {
+    window.requestAnimationFrame(() => {
+      this.clearContainer(this.tileContainer);
 
-    for (let column of grid.cells) {
-      for (let cell of column) {
-        if (cell) {
-          this.addTile(cell);
+      for (let column of grid.cells) {
+        for (let cell of column) {
+          if (cell) {
+            this.addTile(cell);
+          }
         }
       }
-    }
 
-    this.updateScore(metadata.score);
-    this.updateBestScore(metadata.bestScore);
+      this.updateScore(metadata.score);
+      this.updateBestScore(metadata.bestScore);
 
-    if (metadata.terminated) {
-      if (metadata.over) {
-        this.message(false); // You lose
-      } else if (metadata.won) {
-        this.message(true); // You win!
+      if (metadata.terminated) {
+        if (metadata.over) {
+          this.message(false); // You lose
+        } else if (metadata.won) {
+          this.message(true); // You win!
+        }
       }
+    });
+  };
+
+  // Continues the game (both restart and keep playing)
+  continue() {
+    this.clearMessage();
+  };
+
+  clearContainer(container) {
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
     }
-  });
-};
+  };
 
-// Continues the game (both restart and keep playing)
-HTMLActuator.prototype.continue = function () {
-  this.clearMessage();
-};
+  addTile(tile) {
+    let wrapper   = document.createElement("div");
+    let inner     = document.createElement("div");
+    let position  = tile.previousPosition || { x: tile.x, y: tile.y };
+    let positionClass = this.positionClass(position);
 
-HTMLActuator.prototype.clearContainer = function (container) {
-  while (container.firstChild) {
-    container.removeChild(container.firstChild);
-  }
-};
+    // We can't use classlist because it somehow glitches when replacing classes
+    let classes = ["tile", "tile-" + tile.value, positionClass];
 
-HTMLActuator.prototype.addTile = function (tile) {
-  let wrapper   = document.createElement("div");
-  let inner     = document.createElement("div");
-  let position  = tile.previousPosition || { x: tile.x, y: tile.y };
-  let positionClass = this.positionClass(position);
+    if (tile.value > 2048) classes.push("tile-super");
 
-  // We can't use classlist because it somehow glitches when replacing classes
-  let classes = ["tile", "tile-" + tile.value, positionClass];
-
-  if (tile.value > 2048) classes.push("tile-super");
-
-  this.applyClasses(wrapper, classes);
-
-  inner.classList.add("tile-inner");
-  inner.textContent = tile.value;
-
-  if (tile.previousPosition) {
-    // Make sure that the tile gets rendered in the previous position first
-    window.requestAnimationFrame(() => {
-      classes[2] = this.positionClass({ x: tile.x, y: tile.y });
-      this.applyClasses(wrapper, classes); // Update the position
-    });
-  } else if (tile.mergedFrom) {
-    classes.push("tile-merged");
     this.applyClasses(wrapper, classes);
 
-    // Render the tiles that merged
-    tile.mergedFrom.forEach((merged) => {
-      this.addTile(merged);
-    });
-  } else {
-    classes.push("tile-new");
-    this.applyClasses(wrapper, classes);
-  }
+    inner.classList.add("tile-inner");
+    inner.textContent = tile.value;
 
-  // Add the inner part of the tile to the wrapper
-  wrapper.appendChild(inner);
+    if (tile.previousPosition) {
+      // Make sure that the tile gets rendered in the previous position first
+      window.requestAnimationFrame(() => {
+        classes[2] = this.positionClass({ x: tile.x, y: tile.y });
+        this.applyClasses(wrapper, classes); // Update the position
+      });
+    } else if (tile.mergedFrom) {
+      classes.push("tile-merged");
+      this.applyClasses(wrapper, classes);
 
-  // Put the tile on the board
-  this.tileContainer.appendChild(wrapper);
-};
+      // Render the tiles that merged
+      tile.mergedFrom.forEach((merged) => {
+        this.addTile(merged);
+      });
+    } else {
+      classes.push("tile-new");
+      this.applyClasses(wrapper, classes);
+    }
 
-HTMLActuator.prototype.applyClasses = function (element, classes) {
-  element.setAttribute("class", classes.join(" "));
-};
+    // Add the inner part of the tile to the wrapper
+    wrapper.appendChild(inner);
 
-HTMLActuator.prototype.normalizePosition = function (position) {
-  return { x: position.x + 1, y: position.y + 1 };
-};
+    // Put the tile on the board
+    this.tileContainer.appendChild(wrapper);
+  };
 
-HTMLActuator.prototype.positionClass = function (position) {
-  position = this.normalizePosition(position);
-  return "tile-position-" + position.x + "-" + position.y;
-};
+  applyClasses(element, classes) {
+    element.setAttribute("class", classes.join(" "));
+  };
 
-HTMLActuator.prototype.updateScore = function (score) {
-  this.clearContainer(this.scoreContainer);
+  normalizePosition(position) {
+    return { x: position.x + 1, y: position.y + 1 };
+  };
 
-  let difference = score - this.score;
-  this.score = score;
+  positionClass(position) {
+    position = this.normalizePosition(position);
+    return "tile-position-" + position.x + "-" + position.y;
+  };
 
-  this.scoreContainer.textContent = this.score;
+  updateScore(score) {
+    this.clearContainer(this.scoreContainer);
 
-  if (difference > 0) {
-    let addition = document.createElement("div");
-    addition.classList.add("score-addition");
-    addition.textContent = "+" + difference;
+    let difference = score - this.score;
+    this.score = score;
 
-    this.scoreContainer.appendChild(addition);
-  }
-};
+    this.scoreContainer.textContent = this.score;
 
-HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = bestScore;
-};
+    if (difference > 0) {
+      let addition = document.createElement("div");
+      addition.classList.add("score-addition");
+      addition.textContent = "+" + difference;
 
-HTMLActuator.prototype.message = function (won) {
-  let type    = won ? "game-won" : "game-over";
-  let message = won ? "You win!" : "Game over!";
+      this.scoreContainer.appendChild(addition);
+    }
+  };
 
-  this.messageContainer.classList.add(type);
-  this.messageContainer.getElementsByTagName("p")[0].textContent = message;
-};
+  updateBestScore(bestScore) {
+    this.bestContainer.textContent = bestScore;
+  };
 
-HTMLActuator.prototype.clearMessage = function () {
-  // IE only takes one value to remove at a time.
-  this.messageContainer.classList.remove("game-won");
-  this.messageContainer.classList.remove("game-over");
-};
+  message(won) {
+    let type    = won ? "game-won" : "game-over";
+    let message = won ? "You win!" : "Game over!";
+
+    this.messageContainer.classList.add(type);
+    this.messageContainer.getElementsByTagName("p")[0].textContent = message;
+  };
+
+  clearMessage() {
+    // IE only takes one value to remove at a time.
+    this.messageContainer.classList.remove("game-won");
+    this.messageContainer.classList.remove("game-over");
+  };
+}
+window.HTMLActuator = HTMLActuator;
