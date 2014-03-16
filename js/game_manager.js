@@ -117,7 +117,7 @@ class GameManager {
     // Traverse the grid in the right direction and move tiles
     traversals.x.forEach((x) => {
       traversals.y.forEach((y) => {
-        cell = { x: x, y: y };
+        cell = {x, y};
         tile = this.grid.cellContent(cell);
 
         if (tile) {
@@ -215,7 +215,7 @@ class GameManager {
   tileMatchesAvailable() {
     for (let x = 0; x < this.size; x++) {
       for (let y = 0; y < this.size; y++) {
-        let tile = this.grid.cellContent({ x: x, y: y });
+        let tile = this.grid.cellContent({x, y});
 
         if (tile) {
           for (let direction = 0; direction < 4; direction++) {
