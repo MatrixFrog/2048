@@ -78,13 +78,19 @@
     </p>
   </div>
 
-  <script type="application/javascript;version=1.7" src="js/animframe_polyfill.js"></script>
-  <script type="application/javascript;version=1.7" src="js/keyboard_input_manager.js"></script>
-  <script type="application/javascript;version=1.7" src="js/html_actuator.js"></script>
-  <script type="application/javascript;version=1.7" src="js/grid.js"></script>
-  <script type="application/javascript;version=1.7" src="js/tile.js"></script>
-  <script type="application/javascript;version=1.7" src="js/local_score_manager.js"></script>
-  <script type="application/javascript;version=1.7" src="js/game_manager.js"></script>
-  <script src="js/application.js"></script>
+  <script type="application/javascript" src="http://google.github.io/traceur-compiler/bin/traceur.js"></script>
+  <script type="application/javascript" src="http://google.github.io/traceur-compiler/src/bootstrap.js"></script>
+  <script>
+    traceur.options.experimental = true;
+  </script>
+
+  <script type="module" src="js/animframe_polyfill.js"></script>
+  <script type="module" src="js/keyboard_input_manager.js"></script>
+  <script type="module" src="js/html_actuator.js"></script>
+  <script type="module" src="js/grid.js"></script>
+  <script type="module" src="js/tile.js"></script>
+  <script type="module" src="js/local_score_manager.js"></script>
+  <script type="module" src="js/game_manager.js"></script>
+  <script type="module" src="js/application.js"></script>
 </body>
 </html>
