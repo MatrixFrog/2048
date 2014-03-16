@@ -5,6 +5,7 @@ function Grid(size) {
 
   this.build();
 }
+window.Grid = Grid;
 
 // Build a grid of the specified size
 Grid.prototype.build = function () {

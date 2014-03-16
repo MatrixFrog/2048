@@ -3,6 +3,7 @@ function KeyboardInputManager() {
 
   this.listen();
 }
+window.KeyboardInputManager = KeyboardInputManager;
 
 KeyboardInputManager.prototype.on = function (event, callback) {
   if (!this.events[event]) {

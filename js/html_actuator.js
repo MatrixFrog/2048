@@ -6,6 +6,7 @@ function HTMLActuator() {
 
   this.score = 0;
 }
+window.HTMLActuator = HTMLActuator;
 
 HTMLActuator.prototype.actuate = function (grid, metadata) {
   window.requestAnimationFrame(() => {

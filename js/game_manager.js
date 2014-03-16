@@ -12,6 +12,7 @@ function GameManager(size, InputManager, Actuator, ScoreManager) {
 
   this.setup();
 }
+window.GameManager = GameManager;
 
 // Restart the game
 GameManager.prototype.restart = function () {
