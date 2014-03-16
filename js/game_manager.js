@@ -209,21 +209,15 @@ class GameManager {
 
   // Check for available matches between tiles (more expensive check)
   tileMatchesAvailable() {
-    for (let x = 0; x < this.size; x++) {
-      for (let y = 0; y < this.size; y++) {
-        let tile = this.grid.cellContent({x, y});
+    for (let tile of this.grid.tiles()) {
+      for (let direction = 0; direction < 4; direction++) {
+        let vector = this.getVector(direction);
+        let cell   = { x: tile.x + vector.x, y: tile.y + vector.y };
 
-        if (tile) {
-          for (let direction = 0; direction < 4; direction++) {
-            let vector = this.getVector(direction);
-            let cell   = { x: x + vector.x, y: y + vector.y };
+        let other  = this.grid.cellContent(cell);
 
-            let other  = this.grid.cellContent(cell);
-
-            if (other && other.value === tile.value) {
-              return true; // These two tiles can be merged
-            }
-          }
+        if (other && other.value === tile.value) {
+          return true; // These two tiles can be merged
         }
       }
     }
